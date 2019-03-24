@@ -6,10 +6,7 @@ doctype html
 html
   head
     title
-      if q
-        = "Synonyms for '" + q + "' in the Moby Thesaurus"
-      else
-        = "Moby Thesaurus"
+      = "Relationship notes comparing '" + one + "' and '" + two + "' in the Remoby Superthesaurus"
 
     meta(name="viewport" content="width=device-width, initial-scale=1")
     meta(name="description" content="A free and open-source website for searching the largest thesaurus in the English language.")
@@ -48,36 +45,60 @@ html
 
         // Save query history in localStorage
         var query = document.querySelector("#q").value
-        var queries = store.get("queries")
-        if (!queries) queries = {}
+        var rQueries = store.get("rQueries")
+        if (!rQueries) rQueries = {}
 
         if (query) {
-          queries[Date.now()] = query
-          store.set("queries", queries)
+          rQueries[Date.now()] = query
+          store.set("rQueries", rQueries)
         }
 
-        if (location.hash === "#show-queries") {
-          var recentQueryLinks = Object.keys(queries).reverse().map(function(key) {
-            return "<li><a href=\"/search?q=" + queries[key] + "\">" + queries[key] + "</a><li>"
+        if (location.hash === "#show-rQueries") {
+          var recentQueryLinks = Object.keys(rQueries).reverse().map(function(key) {
+            return "<li><a href=\"/search?q=" + rQueries[key] + "\">" + rQueries[key] + "</a><li>"
           }).join("")
           //- console.log(recentQueryLinks);
-          document.querySelector("#queries")
-            .insertAdjacentHTML('afterend', "<h2>Your recent queries:</h2> <ul class='results'>" + recentQueryLinks + "</ul>")
+          document.querySelector("#rQueries")
+            .insertAdjacentHTML('afterend', "<h2>Your recent rQueries:</h2> <ul class='results'>" + recentQueryLinks + "</ul>")
         }
 
       })
 
     block head
 
-  body
+    body
 
-    header
+      header
+        section
+          h1="'" + one + "' vs. '" + two + "'"
+
       section
-        if !q
-          h1 moby
-        +form(q)
+        if searchResults.length === 0
+          p.weak= "No entry for " + q + ". Request one? <...TODO...>"
 
-    section
-      block content
+        else
 
-    footer
+          h2
+            = searchResults.length
+            | &nbsp;relationship clarifications for &lsquo;
+            = one
+            = two
+            | &rsquo;
+
+          ul.results.relationship_results
+            for entry,i in searchResults
+              li=entry.content + " - " + entry.author
+
+        #queries
+
+        //- if searchResults.length > 0
+        //-   a(href="#")#mode_switcher Toggle display mode.
+
+        .newbs-only
+          :markdown-it
+            [moby-thesaurus.org](/) is a free and
+            open-source website for perusing Moby, the largest
+            thesaurus in the English language[&hellip;](/)
+
+
+      footer

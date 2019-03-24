@@ -34,6 +34,18 @@ ul.results > li {
   display: inline-block;
 }
 
+ul.results.relationship_results {
+  list-style: disc;
+}
+
+ul.results.relationship_results > li {
+  display: list-item;
+}
+
+ul.results.relationship_results > li:after {
+  content: "; ";
+}
+
 ul.results > li:after {
   content: ", ";
   padding-right: 5px;
